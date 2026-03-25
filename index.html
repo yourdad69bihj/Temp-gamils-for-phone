@@ -2,50 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
     <title>Temp Gmails</title>
     <style>
         :root { --neon: #00f2ea; --bg: #0b0c10; --panel: #1f2833; --purple: #7a00ff; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .menu { width: 100%; max-width: 420px; background: var(--panel); border: 1px solid var(--neon); border-radius: 8px; box-shadow: 0 0 20px rgba(0, 242, 234, 0.2); overflow: hidden; }
-        .header { background: rgba(0, 242, 234, 0.1); padding: 15px; text-align: center; border-bottom: 1px solid var(--neon); font-weight: bold; text-shadow: 0 0 10px var(--neon); text-transform: uppercase; }
-        .content { padding: 20px; }
-        .addr-box { background: #000; border: 1px solid #333; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 15px; }
-        .email-text { color: var(--neon); font-family: monospace; font-size: 16px; margin-bottom: 10px; word-break: break-all; }
-        .btn { background: #111; border: 1px solid #444; color: white; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; margin-bottom: 8px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        
+        /* Forces the app to fill the entire phone screen */
+        html, body { 
+            height: 100%; width: 100%; margin: 0; padding: 0; 
+            background: var(--bg); overflow: hidden; 
+        }
+
+        body { 
+            color: white; font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; 
+        }
+
+        .menu {
+            display: flex; flex-direction: column;
+            height: 100vh; width: 100vw;
+            background: var(--panel);
+            border: none; /* Removed border to fill screen edge-to-edge */
+        }
+
+        .header { 
+            background: rgba(0, 242, 234, 0.1); padding: 20px; text-align: center; 
+            border-bottom: 1px solid var(--neon); font-weight: bold; 
+            text-shadow: 0 0 10px var(--neon); text-transform: uppercase;
+            font-size: 18px;
+        }
+
+        .content { 
+            padding: 20px; flex-grow: 1; display: flex; flex-direction: column; 
+            overflow-y: auto; 
+        }
+
+        .addr-box { 
+            background: #000; border: 1px solid #333; padding: 20px; 
+            border-radius: 12px; text-align: center; margin-bottom: 20px; 
+        }
+
+        .email-text { 
+            color: var(--neon); font-family: monospace; font-size: 18px; 
+            margin-bottom: 15px; word-break: break-all; 
+        }
+
+        .btn { 
+            background: #111; border: 1px solid #444; color: white; padding: 15px; 
+            width: 100%; border-radius: 8px; cursor: pointer; margin-bottom: 10px; 
+            font-size: 14px; font-weight: bold; text-transform: uppercase; 
+        }
+
         .btn:active { background: var(--neon); color: black; }
         .btn-cyan { border-color: var(--neon); color: var(--neon); }
         .btn-purple { border-color: var(--purple); color: var(--purple); }
-        .label { font-size: 10px; color: #555; text-transform: uppercase; margin: 15px 0 5px; display: block; }
-        .list { border-top: 1px solid #222; height: 300px; overflow-y: auto; }
-        .item { background: rgba(255,255,255,0.03); padding: 12px; margin-top: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--neon); }
-        .item-text { flex-grow: 1; cursor: pointer; font-size: 13px; color: var(--neon); }
-        .code-pill { background: var(--neon); color: black; font-weight: 900; padding: 8px; border-radius: 3px; margin: 10px 0; display: inline-block; box-shadow: 0 0 10px var(--neon); }
-        .msg-body { font-size: 12px; color: #ccc; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; white-space: pre-wrap; }
-        .hidden { display: none; }
+
+        .label { 
+            font-size: 11px; color: #555; text-transform: uppercase; 
+            margin: 10px 0 10px; display: block; letter-spacing: 1px;
+        }
+
+        .list { flex-grow: 1; overflow-y: auto; border-top: 1px solid #222; }
+
+        .item { 
+            background: rgba(255,255,255,0.03); padding: 15px; margin-top: 10px; 
+            border-radius: 8px; display: flex; justify-content: space-between; 
+            align-items: center; border-left: 4px solid var(--neon); 
+        }
+
+        .item-text { flex-grow: 1; cursor: pointer; font-size: 14px; color: var(--neon); }
+        
+        .code-pill { 
+            background: var(--neon); color: black; font-weight: 900; padding: 10px; 
+            border-radius: 4px; margin: 15px 0; display: inline-block; 
+            box-shadow: 0 0 15px var(--neon); 
+        }
+
+        .msg-body { 
+            font-size: 13px; color: #ccc; margin-top: 10px; padding-top: 15px; 
+            border-top: 1px dashed #444; white-space: pre-wrap; 
+        }
+
+        .hidden { display: none !important; }
+
+        /* Full-screen Reader */
+        #view-inbox { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: var(--bg); z-index: 100; padding: 20px; box-sizing: border-box; 
+        }
     </style>
 </head>
 <body>
-<div class="menu">
+
+<div class="menu" id="view-home">
     <div class="header">VULCAN FRESH MOBILE</div>
     <div class="content">
-        <div id="view-home">
-            <div class="addr-box">
-                <div id="active-addr" class="email-text">None Generated</div>
-                <button class="btn btn-cyan" onclick="generateNew()">Generate New</button>
-                <button class="btn btn-purple" onclick="saveSession()">Save Session</button>
-            </div>
-            <span class="label">Saved History</span>
-            <div id="history-list" class="list"></div>
+        <div class="addr-box">
+            <div id="active-addr" class="email-text">None Generated</div>
+            <button class="btn btn-cyan" onclick="generateNew()">Generate New</button>
+            <button class="btn btn-purple" onclick="saveSession()">Save Session</button>
         </div>
-        <div id="view-inbox" class="hidden">
-            <button class="btn" onclick="closeInbox()">← Back to History</button>
-            <div class="addr-box"><div id="inbox-title" class="email-text" style="font-size:12px"></div></div>
-            <button class="btn btn-cyan" onclick="refreshInbox()">Refresh Inbox</button>
-            <div id="msg-list" class="list"></div>
-        </div>
+        <span class="label">Saved History</span>
+        <div id="history-list" class="list"></div>
     </div>
+</div>
+
+<div id="view-inbox" class="hidden">
+    <button class="btn" onclick="closeInbox()">← Back to History</button>
+    <div class="addr-box"><div id="inbox-title" class="email-text" style="font-size:14px"></div></div>
+    <button class="btn btn-cyan" onclick="refreshInbox()">Refresh Inbox</button>
+    <div id="msg-list" class="list" style="height: calc(100% - 200px);"></div>
 </div>
 
 <script>
